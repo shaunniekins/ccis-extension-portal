@@ -1,6 +1,20 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
+  // Check if the path matches /manage/extension/{id}
+  const extensionIdMatch = request.nextUrl.pathname.match(
+    /^\/manage\/extension\/([^\/]+)$/
+  );
+  if (extensionIdMatch) {
+    const url = new URL(request.url);
+    // Only redirect if tab parameter is not already present
+    if (!url.searchParams.has("tab")) {
+      url.searchParams.set("tab", "MOA");
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
   if (
     request.nextUrl.pathname === "/" ||
     request.nextUrl.pathname === "/dashboard" ||
@@ -31,7 +45,7 @@ export const config = {
     "/manage",
     "/manage/partner",
     "/manage/extension",
-
+    "/manage/extension/:id*", // Add matcher for extension ID paths
     "/ident",
     "/login",
   ],

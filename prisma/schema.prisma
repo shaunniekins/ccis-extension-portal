@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Partner {
+  id        String    @id @default(cuid())
+  name      String
+  // One-to-many relation: A partner can have many projects.
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Project {
+  id             String     @id @default(cuid())
+  partnerId      String
+  // Establish relation to Partner.
+  partner        Partner    @relation(fields: [partnerId], references: [id])
+  title          String
+  description    String?
+  projectLeader  String?
+  proponents     String?
+  dateStarted    DateTime?
+  dateCompletion DateTime?
+  // One-to-many relation: A project can have many documents.
+  documents      Document[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  projectId String
+  // Establish relation to Project.
+  project   Project  @relation(fields: [projectId], references: [id])
+  fileUrl   String
+  // Use these fields to capture the folder structure.
+  // "MOA", "Meetings", "Documents", "Letters", "Certifications", "Reports", "References", "Involved_Personnels", "Trainings_and_Workshops"
+  category  String
+  fileName  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

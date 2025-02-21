@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronRight, FolderClosed, Handshake } from "lucide-react";
 
 import {
@@ -20,76 +20,51 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
-// This is sample data.
-const data = {
-  navMain: [
-    // {
-    //   title: "Dashboard",
-    //   url: "#",
-    //   icon: LayoutDashboard,
-    //   isActive: false,
-    //   noItem: true,
-    // },
-    {
-      title: "Extension Programs",
-      // url: "extension",
-      code: "extension",
-      icon: FolderClosed,
-      isActive: true,
-      items: [
-        {
-          id: 1,
-          title:
-            "Adopt an Agency Extension Program - DENR-NGP Information System",
-        },
-      ].sort((a, b) => a.title.localeCompare(b.title)),
-    },
-    {
-      title: "Partners",
-      // url: "extension",
-      code: "partner",
-
-      icon: Handshake,
-      isActive: true,
-      items: [
-        {
-          id: 1,
-          title: "DOT",
-        },
-        {
-          id: 2,
-          title: "LOA",
-        },
-        {
-          id: 3,
-          title: "ACES",
-        },
-        {
-          id: 4,
-          title: "DENR NGP",
-        },
-        {
-          id: 5,
-          title: "DepedAgNor DPTPIT",
-        },
-        {
-          id: 6,
-          title: "DSWD",
-        },
-        {
-          id: 7,
-          title: "BAFE",
-        },
-        {
-          id: 8,
-          title: "PNP",
-        },
-      ].sort((a, b) => a.title.localeCompare(b.title)),
-    },
-  ],
-};
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [partners, setPartners] = useState<Partner[]>([]);
+
+  useEffect(() => {
+    fetch("/api/projects")
+      .then((res) => res.json())
+      .then((data) => setProjects(data));
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/partners")
+      .then((res) => res.json())
+      .then((data) => setPartners(data));
+  }, []);
+
+  const data = {
+    navMain: [
+      {
+        title: "Extension Programs",
+        code: "extension",
+        icon: FolderClosed,
+        isActive: true,
+        items: projects
+          .map((project) => ({
+            id: project.id,
+            title: project.title,
+          }))
+          .sort((a, b) => a.title.localeCompare(b.title)),
+      },
+      {
+        title: "Partners",
+        code: "partner",
+        icon: Handshake,
+        isActive: true,
+        items: partners
+          .map((partner) => ({
+            id: partner.id,
+            title: partner.name,
+          }))
+          .sort((a, b) => a.title.localeCompare(b.title)),
+      },
+    ],
+  };
+
   return (
     <Sidebar variant="floating" {...props}>
       <SidebarHeader>
@@ -97,10 +72,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="/dashboard">
-                {/* <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <GalleryVerticalEnd className="size-4" />
-                </div> */}
-
                 <span className="font-semibold">CCIS Extension Portal</span>
               </a>
             </SidebarMenuButton>
@@ -120,15 +91,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <CollapsibleTrigger asChild>
-                      <span
-                        // href={item.url}
-                        className="font-medium text-xs uppercase cursor-pointer"
-                      >
+                      <span className="font-medium text-xs uppercase cursor-pointer">
                         <item.icon />
                         <span>{item.title}</span>
-                        {/* ${
-                            item.noItem && "invisible"
-                          } */}
                         <ChevronRight
                           className={`ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90`}
                         />
@@ -142,9 +107,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton
                               asChild
-                              className={`${
-                                item.code === "extension" && "py-6"
-                              }`}
+                              // className={`${
+                              //   item.code === "extension" && "py-6"
+                              // }`}
                             >
                               <a href={`/manage/${item.code}/${subItem.id}`}>
                                 {subItem.title}
