@@ -24,9 +24,9 @@ export default function Dashboard() {
       .then((data) => setProjects(data));
   }, []);
 
-  useEffect(() => {
-    console.log("projects: ", projects);
-  }, [projects]);
+  // useEffect(() => {
+  //   console.log("projects: ", projects);
+  // }, [projects]);
 
   return (
     <div className="h-full w-full flex flex-col gap-4 p-4 bg-muted/50 rounded-lg shadow-[0_0_0_1px_hsl(var(--sidebar-border))]">

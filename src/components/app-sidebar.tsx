@@ -105,13 +105,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
                         {item.items.map((subItem) => (
                           <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton
-                              asChild
-                              // className={`${
-                              //   item.code === "extension" && "py-6"
-                              // }`}
-                            >
-                              <a href={`/manage/${item.code}/${subItem.id}`}>
+                            <SidebarMenuSubButton asChild className="truncate">
+                              <a
+                                href={`/manage/${item.code}/${subItem.id}`}
+                                className="block truncate w-full"
+                                title={subItem.title}
+                              >
                                 {subItem.title}
                               </a>
                             </SidebarMenuSubButton>
