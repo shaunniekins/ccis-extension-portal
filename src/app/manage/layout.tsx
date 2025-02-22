@@ -54,10 +54,9 @@ import { usePathname } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { uploadFile, getPublicUrl } from "@/lib/storage-utils";
 import { signOut, useSession } from "next-auth/react";
 
-export default function AdminSlugLayout({
+export default function ManageSlugLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -115,7 +114,7 @@ export default function AdminSlugLayout({
       toast.success("Partner created successfully");
       setIsPartnerDialogOpen(false);
       setPartnerName("");
-      // Optionally refresh the page or update the partners list
+
       window.location.reload();
     } catch (error) {
       toast.error("Failed to create partner");
@@ -170,20 +169,30 @@ export default function AdminSlugLayout({
 
     setIsUploadingDocument(true);
     try {
-      // Upload file to Supabase storage with custom file name
-      const timestamp = Date.now();
-      const fileName = `${timestamp}-${documentData.fileName}.pdf`;
+      const fileName = `${documentData.projectId}-${documentData.fileName}.pdf`;
       const filePath = `${documentData.category}/${fileName}`;
 
-      await uploadFile(selectedFile, filePath);
-      const fileUrl = getPublicUrl(filePath);
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("filePath", filePath);
 
-      // Save document details to database
-      const response = await fetch("/api/documents/new", {
+      const response = await fetch("/api/buckets/upload", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        console.error("Failed to upload document: response:", response);
+        throw new Error("File upload failed");
+      }
+
+      const { path } = await response.json();
+
+      const fileUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/documents/${path}`;
+
+      const saveResponse = await fetch("/api/documents/new", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fileUrl,
           category: documentData.category,
@@ -192,16 +201,14 @@ export default function AdminSlugLayout({
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to save document");
+      if (!saveResponse.ok) throw new Error("Failed to save document");
 
       toast.success("Document uploaded successfully");
       setIsPdfDialogOpen(false);
       setSelectedFile(null);
-      setDocumentData({
-        projectId: "",
-        category: "",
-        fileName: "",
-      });
+      setDocumentData({ projectId: "", category: "", fileName: "" });
+
+      window.location.reload();
     } catch (error) {
       toast.error("Failed to upload document");
       console.error(error);

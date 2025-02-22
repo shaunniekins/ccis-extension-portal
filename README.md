@@ -9,7 +9,7 @@ The CCIS Extension Portal is a comprehensive web-based platform designed to faci
 - **Frontend**: Next.js, TailwindCSS, React
 - **Backend**: Next.js API Routes
 - **Database**: Supabase PostgreSQL
-- **Storage**: Supabase Storage
+- **Storage**: Supabase (AWS S3-protocol)
 - **Deployment**: Vercel
 - **ORM**: Prisma
 
@@ -38,8 +38,13 @@ DATABASE_URL="postgresql://postgres.[YOUR_PROJECT_ID]:[YOUR_PASSWORD]@aws-0-ap-s
 DIRECT_URL="postgresql://postgres.[YOUR_PROJECT_ID]:[YOUR_PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
 
 # Supabase Configuration
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+
+# Supabase S3-Compatible Storage
+NEXT_PUBLIC_SUPABASE_S3_REGION=your_supabase_s3_region
+NEXT_PUBLIC_SUPABASE_S3_ENDPOINT=your_supabase_s3_endpoint
+SUPABASE_S3_ACCESS_KEY=your_supabase_s3_access_key
+SUPABASE_S3_SECRET_KEY=your_supabase_s3_secret_key
 
 # Others
 NEXTAUTH_SECRET=your_generated_secret
@@ -53,6 +58,7 @@ ALLOWED_DOMAINS=comma,separated,domains
    - Create a new project in Supabase
    - Get your database environment variables from Connect > ORMs
    - Update your `.env` file with the environment variables
+   - Enable and configure Supabase Storage to use S3-compatible mode
 
 2. Initialize the database schema:
 
