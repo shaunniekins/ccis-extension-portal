@@ -71,7 +71,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="/dashboard">
+              <a href="/manage/dashboard">
                 <span className="font-semibold">CCIS Extension Portal</span>
               </a>
             </SidebarMenuButton>

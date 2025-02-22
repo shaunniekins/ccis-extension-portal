@@ -1,15 +1,3 @@
-interface User {
-  id: string;
-  name?: string;
-  email?: string;
-  emailVerified?: string;
-  image?: string;
-  accounts: Account[];
-  sessions: Session[];
-  createdAt: string;
-  updatedAt: string;
-}
-
 interface Account {
   id: string;
   userId: string;
@@ -23,25 +11,24 @@ interface Account {
   scope?: string;
   id_token?: string;
   session_state?: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 interface Session {
-  id: string;
+  id: String;
   sessionToken: string;
   userId: string;
   expires: string;
-  user: User;
+}
+interface User {
+  id: string;
+  name?: string;
+  email: string;
+  password: string;
   createdAt: string;
   updatedAt: string;
+  accounts: Account[];
+  sessions: Session[];
 }
-
-// interface VerificationToken {
-//   identifier: string;
-//   token: string;
-//   expires: string;
-// }
 
 interface Partner {
   id: string;

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export function LoginForm({
   className,
@@ -14,6 +15,8 @@ export function LoginForm({
   const router = useRouter();
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const searchParams = new URLSearchParams(window.location.search);
+  const callbackUrl = searchParams.get("callbackUrl") || "/manage/dashboard";
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -21,27 +24,27 @@ export function LoginForm({
     setError("");
 
     const formData = new FormData(event.currentTarget);
+    const email = formData.get("email");
+    const password = formData.get("password");
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formData.get("email"),
-          password: formData.get("password"),
-        }),
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to login");
+      if (result?.error) {
+        setError(result.error);
+      } else {
+        // Clear browser history before redirecting
+        if (typeof window !== "undefined") {
+          window.history.pushState({}, "", callbackUrl);
+        }
+        router.replace(callbackUrl);
       }
-
-      // Redirect to dashboard on success
-      router.push("/manage/dashboard");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+    } catch (error) {
+      setError("An error occurred during login");
     } finally {
       setIsLoading(false);
     }
@@ -74,12 +77,12 @@ export function LoginForm({
         <div className="grid gap-2">
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
-            <a
+            {/* <a
               href="#"
               className="ml-auto text-xs underline-offset-4 hover:underline"
             >
               Forgot your password?
-            </a>
+            </a> */}
           </div>
           <Input name="password" id="password" type="password" required />
         </div>

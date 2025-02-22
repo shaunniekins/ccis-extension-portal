@@ -2,11 +2,7 @@
 
 ## Overview
 
-The CCIS Extension Portal is a comprehensive web-based platform designed to facilitate and streamline the management of partner collaborations, projects, and trainings within the CCIS (Center for Community and Institutional Services). The system serves as a centralized hub for tracking, organizing, and archiving essential documents, ensuring transparency, accessibility, and efficiency in all partnership and project activities.
-
-### Purpose
-
-This portal aims to enhance collaboration and documentation management across CCIS's partnership projects and trainings.
+The CCIS Extension Portal is a comprehensive web-based platform designed to facilitate and streamline the management of partner collaborations, projects, and trainings within the CCIS (Center for Community and Institutional Services). The system serves as a centralized hub for tracking, organizing, and archiving essential documents.
 
 ## Tech Stack
 
@@ -47,9 +43,13 @@ POSTGRES_DB=your_database_name
 # Supabase Configuration
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+
+# Others
+NEXTAUTH_SECRET=your_generated_secret
+ALLOWED_DOMAINS=comma,separated,domains
 ```
 
-## Getting Started
+## Development Setup
 
 1. Start the database:
 
@@ -82,9 +82,18 @@ npm run dev
 
 4. Open [http://localhost:3060](http://localhost:3060) in your browser
 
-## Deployment
+## Generating NEXTAUTH_SECRET
 
-The application is configured for deployment on Vercel:
+Choose one of these methods:
 
-1. Push your changes to the main branch
-2. Vercel will automatically build and deploy
+1. Using OpenSSL:
+
+```bash
+openssl rand -base64 32
+```
+
+2. Using Node.js:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```

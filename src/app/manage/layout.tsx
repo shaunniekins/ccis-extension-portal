@@ -55,12 +55,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { uploadFile, getPublicUrl } from "@/lib/storage-utils";
+import { signOut, useSession } from "next-auth/react";
 
 export default function AdminSlugLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { data: session } = useSession();
   const [isPartnerDialogOpen, setIsPartnerDialogOpen] = useState(false);
   const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false);
   const [isPdfDialogOpen, setIsPdfDialogOpen] = useState(false);
@@ -614,21 +616,29 @@ export default function AdminSlugLayout({
             <Button size={"icon"} variant={"ghost"} className="rounded-lg">
               <Settings />
             </Button>
-            <Button size={"sm"} variant={"ghost"} className="rounded-lg">
-              <CircleUserRound />
-              <h3 className="text-sm">Hi, Shaun</h3>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size={"sm"} variant={"ghost"} className="rounded-lg">
+                  <CircleUserRound />
+                  <h3 className="text-sm">
+                    Hi, {session?.user?.name || "Guest"}
+                  </h3>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    signOut({ callbackUrl: "/ident/login" });
+                  }}
+                >
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-          </div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" /> */}
-          {children}
-        </div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );
