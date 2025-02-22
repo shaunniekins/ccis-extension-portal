@@ -8,10 +8,9 @@ The CCIS Extension Portal is a comprehensive web-based platform designed to faci
 
 - **Frontend**: Next.js, TailwindCSS, React
 - **Backend**: Next.js API Routes
-- **Database**: PostgreSQL<!-- - **Authentication**: Supabase Auth -->
+- **Database**: Supabase PostgreSQL
 - **Storage**: Supabase Storage
 - **Deployment**: Vercel
-- **Container**: Docker
 - **ORM**: Prisma
 
 ## Environment Setup
@@ -32,13 +31,11 @@ npm install
 3. Create a `.env` file at the root of your project with the following variables:
 
 ```env
-# Database Configuration for Prisma
-DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
+# Database Configuration for Supabase
+DATABASE_URL="postgresql://postgres.[YOUR_PROJECT_ID]:[YOUR_PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
 
-# Database Configuration for Docker PostgreSQL
-POSTGRES_USER=your_postgres_user
-POSTGRES_PASSWORD=your_secure_password
-POSTGRES_DB=your_database_name
+# Direct connection to the database. Used for migrations.
+DIRECT_URL="postgresql://postgres.[YOUR_PROJECT_ID]:[YOUR_PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
 
 # Supabase Configuration
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
@@ -51,18 +48,11 @@ ALLOWED_DOMAINS=comma,separated,domains
 
 ## Development Setup
 
-1. Start the database:
+1. Set up Supabase:
 
-```bash
-# Stop any existing containers
-docker-compose down
-
-# Start containers in detached mode
-docker-compose up -d
-
-# Verify containers are running
-docker ps
-```
+   - Create a new project in Supabase
+   - Get your database environment variables from Connect > ORMs
+   - Update your `.env` file with the environment variables
 
 2. Initialize the database schema:
 
