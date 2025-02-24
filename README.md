@@ -41,8 +41,8 @@ DIRECT_URL="postgresql://postgres.[YOUR_PROJECT_ID]:[YOUR_PASSWORD]@aws-0-ap-sou
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 
 # Supabase S3-Compatible Storage
-NEXT_PUBLIC_SUPABASE_S3_REGION=your_supabase_s3_region
-NEXT_PUBLIC_SUPABASE_S3_ENDPOINT=your_supabase_s3_endpoint
+SUPABASE_S3_REGION=your_supabase_s3_region
+SUPABASE_S3_ENDPOINT=your_supabase_s3_endpoint
 SUPABASE_S3_ACCESS_KEY=your_supabase_s3_access_key
 SUPABASE_S3_SECRET_KEY=your_supabase_s3_secret_key
 
