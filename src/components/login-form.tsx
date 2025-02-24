@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
@@ -15,8 +15,13 @@ export function LoginForm({
   const router = useRouter();
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-  const searchParams = new URLSearchParams(window.location.search);
-  const callbackUrl = searchParams.get("callbackUrl") || "/manage/dashboard";
+  const [callbackUrl, setCallbackUrl] = useState("/manage/dashboard");
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const callback = searchParams.get("callbackUrl") || "/manage/dashboard";
+    setCallbackUrl(callback);
+  }, []);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -44,6 +49,7 @@ export function LoginForm({
         router.replace(callbackUrl);
       }
     } catch (error) {
+      console.error("Login error:", error);
       setError("An error occurred during login");
     } finally {
       setIsLoading(false);
